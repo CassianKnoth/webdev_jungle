@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>webdev jungle – ESJ Blog</title>
+
+		<!-- CSS -->
+		<link type="text/CSS" rel="stylesheet" href="../style.css" />
+
+		<!-- fonts (google fonts: Montserratm Playfair Display, Courier Prime) -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<!-- header -->
+		<header>
+			<a href="../index.html" class="logo monospace">webdev jungle</a>
+			<button type="button" class="button toggleBlogFormModal">
+				+ new entry
+			</button>
+		</header>
+
+		<!-- content -->
+		<main class="blogWrapper">
+			<h1>Eloquent JavaScript Blog 📝</h1>
+			<input
+				type="checkbox"
+				name="blogNavToggle"
+				id="blogNavToggle"
+				class="blogNavToggle"
+			/>
+			<!-- table of contents -->
+			<nav class="blogNav">
+				<label for="blogNavToggle"></label>
+				<h1>Contents:</h1>
+				<hr />
+				<ol start="0" class="tableOfContents">
+					<!-- template for toc entry -->
+					<template class="tocTemplate">
+						<li>
+							<a
+								><span></span>
+								<br />
+								<span class="small"></span>
+							</a>
+						</li>
+					</template>
+				</ol>
+			</nav>
+			<section class="blogEntries">
+				<!-- template for blogEntry -->
+				<template class="blogEntryTemplate">
+					<article class="blogEntry blogEntryWrapper">
+						<h1></h1>
+						<hr />
+						<p class="blogDate monospace">
+							<time datetime=""></time>
+						</p>
+						<!-- template for blog timestamp (when edited last) -->
+						<template class="blogDateEditTemplate">
+							<p class="blogDate monospace lastEdit">
+								<time datetime="">Test</time>
+							</p>
+						</template>
+						<!-- template for blog entry segment "normal" text -->
+						<template class="blogTextTemplate"><p></p></template>
+						<!-- template for blog entry segment code snippet -->
+						<template class="blogCodeTemplate">
+							<div class="code">
+								<pre><code></code></pre>
+								<button
+									type="button"
+									onclick="copyCode(event)"
+									class="button copyCode"
+								>
+									copy code
+								</button>
+							</div>
+						</template>
+						<button type="button" class="button editBlogEntryButton">
+							<span>✏️</span>
+						</button>
+					</article>
+				</template>
+
+				<!-- template with form for editing a blog entry -->
+				<template class="editBlogEntryTemplate">
+					<form onsubmit="updateBlogEntry(event)" class="formEditEntry">
+						<div class="blogEntryWrapper">
+							<h1><input type="text" value="" onInput="validateEdit()" /></h1>
+							<input
+								type="text"
+								class="editTocAddition"
+								placeholder="Optional subheadline in table of contents"
+								onInput="validateEdit()"
+							/>
+							<hr />
+							<p class="blogDate monospace">
+								<time datetime=""></time>
+							</p>
+
+							<!-- template for blog timestamp (when edited last) -->
+							<template class="blogDateEditTemplate">
+								<p class="blogDate monospace lastEdit">
+									<time datetime="">Test</time>
+								</p>
+							</template>
+
+							<!-- template for blog entry segment "normal" text -->
+							<div class="editFormInputs">
+								<template class="blogEditTemplateText">
+									<div class="formInputWrapper">
+										<p class="editTextareaSizer">
+											<textarea
+												onInput="this.parentNode.dataset.value = this.value;validateEdit()"
+											></textarea>
+										</p>
+										<button
+											type="button"
+											class="button removeFormInput"
+											onclick="removeSegment(event)"
+										>
+											X
+										</button>
+									</div>
+								</template>
+
+								<!-- template for blog entry segment code snippet -->
+								<template class="blogEditTemplateCode">
+									<div class="code formInputWrapper">
+										<pre>
+										<code class="editTextareaSizer">
+											<textarea onInput="this.parentNode.dataset.value = this.value;validateEdit()"></textarea>
+										</code>
+									</pre>
+										<button
+											type="button"
+											class="button removeFormInput"
+											onclick="removeSegment(event)"
+										>
+											X
+										</button>
+									</div>
+								</template>
+							</div>
+						</div>
+						<div class="formButtonFlex">
+							<div class="formButtonFlexLeft">
+								<button
+									type="button"
+									class="button addText"
+									onclick="addSegment(event, 'blogEditTemplateText', 'editFormInputs')"
+								>
+									add paragraph
+								</button>
+								<button
+									type="button"
+									class="button addCode"
+									onclick="addSegment(event, 'blogEditTemplateCode', 'editFormInputs')"
+								>
+									add code { }
+								</button>
+							</div>
+							<div class="formButtonFlexLeft">
+								<button
+									type="button"
+									class="button buttonInvert"
+									onclick="cancelEdit()"
+								>
+									cancel
+								</button>
+								<input
+									type="submit"
+									value="submit entry"
+									class="button"
+									disabled
+								/>
+							</div>
+						</div>
+					</form>
+				</template>
+			</section>
+			<!-- modal with form for creating new blog entry -->
+			<section class="blogForm">
+				<form onsubmit="createEntryFromForm(event)" class="formCreateEntry">
+					<h1>Create new blog entry</h1>
+					<div class="formInputs">
+						<input
+							type="text"
+							class="userInput formHeadline"
+							placeholder="Headline *"
+							required
+							oninvalid="formValidation(event)"
+						/>
+						<input
+							type="text"
+							class="userInput formTocAddition"
+							placeholder="Optional subheadline in table of contents"
+						/>
+						<div class="formInputWrapper">
+							<textarea
+								class="userInput newInput formParagraph"
+								placeholder="Write something... *"
+								required
+								oninvalid="formValidation(event)"
+							></textarea>
+							<button
+								type="button"
+								class="button removeFormInput"
+								onclick="removeSegment(event)"
+							>
+								X
+							</button>
+						</div>
+						<!-- template for paragraph input -->
+						<template class="formInputWrapperTemplateText">
+							<div class="formInputWrapper">
+								<textarea
+									class="userInput newInput formParagraph"
+									placeholder="Write something... *"
+									required
+									oninvalid="formValidation(event)"
+								></textarea>
+								<button
+									type="button"
+									class="button removeFormInput"
+									onclick="removeSegment(event)"
+								>
+									X
+								</button>
+							</div>
+						</template>
+						<div class="formInputWrapper">
+							<textarea
+								class="userInput newInput formCode monospace"
+								placeholder="Add code... *"
+								required
+								oninvalid="formValidation(event)"
+							></textarea>
+							<button
+								type="button"
+								class="button removeFormInput"
+								onclick="removeSegment(event)"
+							>
+								X
+							</button>
+						</div>
+						<!-- template for code input -->
+						<template class="formInputWrapperTemplateCode">
+							<div class="formInputWrapper">
+								<textarea
+									class="userInput newInput formCode monospace"
+									placeholder="Add code... *"
+									required
+									oninvalid="formValidation(event)"
+								></textarea>
+								<button
+									type="button"
+									class="button removeFormInput"
+									onclick="removeSegment(event)"
+								>
+									X
+								</button>
+							</div>
+						</template>
+					</div>
+					<p class="formFootnote">* mandatory</p>
+					<div class="formButtonFlex">
+						<div class="formButtonFlexLeft">
+							<button
+								type="button"
+								class="button addText"
+								onclick="addSegment(event, 'formInputWrapperTemplateText', 'formInputs')"
+							>
+								add paragraph
+							</button>
+							<button
+								type="button"
+								class="button addCode"
+								onclick="addSegment(event, 'formInputWrapperTemplateCode', 'formInputs')"
+							>
+								add code { }
+							</button>
+						</div>
+						<input type="submit" value="submit entry" class="button" />
+					</div>
+				</form>
+			</section>
+		</main>
+
+		<!-- footer – copyright, imprint -->
+		<footer>
+			<p>&copy; Copyright 2022</p>
+			<a href="">Imprint</a>
+		</footer>
+		<script src="../_scripts/ESJ-blog-script.js"></script>
+	</body>
+</html>

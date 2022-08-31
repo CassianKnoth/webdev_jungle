@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>webdev jungle – ESJ Blog</title>
+
+    <!-- CSS -->
+    <link type="text/CSS" rel="stylesheet" href="style.css" />
+
+    <!-- fonts (google fonts: Montserratm Playfair Display, Courier Prime) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <a href="./index.html" class="logo monospace">webdev jungle</a>
+      <a href="#">login <span class="guide">&#10095;</span></a>
+    </header>
+
+    <!-- parallax wrapper  -->
+    <div class="parallaxWrapper">
+      <!-- start – slide: parallax -->
+      <section class="slide start parallax">
+        <h1>Welcome to the jungle!</h1>
+        <p class="monospace">the webdev jungle...</p>
+        <a href="#next" class="scrollDownIndicator" alt="">
+          <div class="arrow">&#10095;</div>
+          <div class="arrow">&#10095;</div>
+          <div class="arrow">&#10095;</div>
+        </a>
+      </section>
+
+      <!-- empty div with id for scrolling -->
+      <div id="next"></div>
+
+      <!-- content slide: personal -->
+      <section class="slide personal">
+        <div class="wrapper">
+          <div class="hero">
+            <img src="./_img/_index/hero.jpg" alt="Portrait of me – Cassian" />
+          </div>
+          <div class="welcome">
+            <h1>My name is Cassian</h1>
+            <h2>Maybe I can guide you a little bit...</h2>
+            <p>
+              On this site you can find some useful links which provide you with
+              valuable and hands on resources for getting started with web
+              development.
+            </p>
+            <p>Check out my current adventure here:</p>
+            <a
+              href="./_pages/EJS-blog.html"
+              alt="Go to Eloquent JavaScript Blog"
+              >Eloquent JavaScript Blog <span class="guide">&#10095;</span></a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- content – slide: tricolon -->
+      <section class="slide overview">
+        <h1>Here are some resources for your expedition:</h1>
+        <div class="tricolon">
+          <div class="chart teaserHTML">
+            <div class="info">
+              <div>
+                <h3>HTML</h3>
+                <hr />
+                <p>
+                  The <span class="bold">H</span>yper<span class="bold">t</span
+                  >ext <span class="bold">M</span>arkup
+                  <span class="bold">L</span>anguage allows you to build the
+                  architecture of your web application.
+                </p>
+              </div>
+              <div class="neutralizeFlex">
+                <a
+                  href="https://www.w3schools.com/html/default.asp"
+                  alt="Go to HTML tutorial on w3schools"
+                  >Learn HTML <span class="guide">&#10095;</span></a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="chart teaserCSS">
+            <div class="info">
+              <div>
+                <h3>CSS</h3>
+                <hr />
+                <p>
+                  With <span class="bold">C</span>ascading
+                  <span class="bold">S</span>tyle
+                  <span class="bold">S</span>eets you can control the appearance
+                  of your web application.
+                </p>
+              </div>
+              <div class="neutralizeFlex">
+                <a
+                  href="https://www.w3schools.com/css/default.asp"
+                  alt="Go to CSS tutorial on w3schools"
+                  >Learn CSS <span class="guide">&#10095;</span></a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="chart teaserJS">
+            <div class="info">
+              <div>
+                <h3>JavaScript</h3>
+                <hr />
+                <p>
+                  <span class="bold">J</span>ava<span class="bold">S</span>cript
+                  truly brings your web application to life and allows for deep
+                  interactivity.
+                </p>
+              </div>
+              <div class="neutralizeFlex">
+                <a
+                  href="https://www.w3schools.com/js/default.asp"
+                  alt="Go to JavaScript tutorial on w3schools"
+                  >Learn JavaScript <span class="guide">&#10095;</span></a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- footer – copyright, imprint -->
+      <footer>
+        <p>&copy; Copyright 2022</p>
+        <a href="">Imprint</a>
+      </footer>
+    </div>
+  </body>
+</html>
