@@ -13,7 +13,7 @@ let blogEntries = [
 	{
 		id: 0,
 		headline: "Introduction",
-		timestamp: new Date("15. August, 2022 15:13"),
+		timestamp: new Date(),
 		paragraphs: [
 			{
 				type: "text",
@@ -84,18 +84,6 @@ console.log(greeting);`,
 	},
 ];
 
-// history for edits:
-/*
-history: [
-	{
-		timeOfEdit: null,
-		oldHeadline: null,
-		oldParagraphs: null,
-		oldTocAddition: null,
-	},
-]
-*/
-
 // BLOG DATA END
 // >>>
 
@@ -133,12 +121,10 @@ const getTimeStamp = (date) => {
 	};
 };
 
-// create entry
+// create entry (from object)
 const createBlogEntry = (entry) => {
-	console.log("create entry from: ", entry);
-
 	// clone blog entry template content,
-	// use querySelector because cloneNode is just the template as fragment
+	// use querySelector for outer wrapping element in template because cloneNode is just the template as fragment
 	const newEntry = blogEntryTemplate.content
 		.cloneNode(true)
 		.querySelector("article");
@@ -153,9 +139,26 @@ const createBlogEntry = (entry) => {
 	const timestamp = getTimeStamp(entry.timestamp);
 
 	// time datetime="YYYY-MM–DD HH:MM"
-	newEntry.querySelector("time").setAttribute("datetime", timestamp.attribute);
+	newEntry
+		.querySelector(".blogDate time.blogDateInitial")
+		.setAttribute("datetime", timestamp.attribute);
 	// visible timestamp
-	newEntry.querySelector(".blogDate").textContent = timestamp.visible;
+	newEntry.querySelector(".blogDate time.blogDateInitial").textContent =
+		timestamp.visible;
+
+	// time of last edit
+	if (entry.history) {
+		console.log("created entry has history");
+		const latestHistory = entry.history[entry.history.length - 1];
+		const timestampLastEdit = getTimeStamp(latestHistory.timeOfEdit);
+
+		newEntry.querySelector(
+			".blogDate time.blogDateEdit"
+		).textContent = `last edit: ${timestampLastEdit.visible}`;
+		newEntry
+			.querySelector(".blogDate time.blogDateEdit")
+			.setAttribute("datetime", timestampLastEdit.attribute);
+	}
 
 	// generate text segment from template
 	const generateP = (text) => {
@@ -196,14 +199,8 @@ const createBlogEntry = (entry) => {
 			editBlogEntry(event, entry.id);
 		});
 
-	// insert entry into parent before form
-	blogColumn.appendChild(newEntry);
-
 	// clone from toc template
 	const newTocEntry = tocTemplate.content.cloneNode(true).querySelector("li");
-	console.log(newTocEntry);
-	console.log(newTocEntry.querySelector("a"));
-	console.log(newTocEntry.querySelector("span.small"));
 
 	// add href to id for hacky scrolling
 	newTocEntry.querySelector("a").setAttribute("href", `#blog${idCounter}`);
@@ -214,16 +211,23 @@ const createBlogEntry = (entry) => {
 		newTocEntry.querySelector("span.small").textContent = entry.tocAddition;
 	}
 
-	// append new toc entry to toc
-	toc.appendChild(newTocEntry);
-
-	idCounter++;
+	return {
+		createdEntry: newEntry,
+		createdTocEntry: newTocEntry,
+	};
 };
 
 // hardcoded blogentries (later from database)
 const generateBlog = (entries) => {
 	for (entry of entries) {
-		createBlogEntry(entry);
+		const createdEntry = createBlogEntry(entry);
+		// insert entry into parent before form
+		blogColumn.appendChild(createdEntry.createdEntry);
+
+		// append new toc entry to toc
+		toc.appendChild(createdEntry.createdTocEntry);
+
+		idCounter++;
 	}
 };
 
@@ -267,11 +271,9 @@ const formInputs = document.getElementsByClassName("formInputs")[0];
 const addSegment = (event, child, parent) => {
 	// get parent
 	const newInputParent = document.querySelector(`.${parent}`);
-	console.log(newInputParent);
 
 	// get template as child
 	const inputTemplate = document.querySelector(`template.${child}`);
-	console.log(inputTemplate);
 
 	// clone from text or code input template
 	const newInput = inputTemplate.content
@@ -284,6 +286,16 @@ const addSegment = (event, child, parent) => {
 
 const removeSegment = (event) => {
 	event.target.parentNode.remove();
+};
+
+const removeSegmentEdit = (event) => {
+	removeSegment(event);
+	const wasFilled = event.target
+		.closest(".formInputWrapper")
+		.querySelector(".editInput").value;
+	if (wasFilled) {
+		validateEdit();
+	}
 };
 
 const createEntryFromForm = (event) => {
@@ -313,9 +325,16 @@ const createEntryFromForm = (event) => {
 	};
 
 	blogEntries.push(newEntry);
-	console.log(blogEntries);
 
-	createBlogEntry(newEntry);
+	const createdEntry = createBlogEntry(newEntry);
+
+	// insert entry into parent before form
+	blogColumn.appendChild(createdEntry.createdEntry);
+
+	// append new toc entry to toc
+	toc.appendChild(createdEntry.createdTocEntry);
+
+	idCounter++;
 
 	// close modal
 	closeModal();
@@ -386,7 +405,10 @@ const editBlogEntry = (event, entryId) => {
 	const toEditNode = event.target.closest(".blogEntry");
 
 	// remember the dom node in case of cancellation
-	lastEdit = toEditNode;
+	lastEdit = {
+		node: toEditNode,
+		data: toEditData,
+	};
 
 	// clone editing form from template
 	const editBlogEntryForm = editBlogEntryTemplate.content
@@ -457,31 +479,86 @@ const editBlogEntry = (event, entryId) => {
 let validEdit = false;
 
 const validateEdit = () => {
-	console.log("valid edit");
 	if (!validEdit) {
-		console.log("entered valid if");
 		const editSubmitBtton = document.querySelector(
 			".formEditEntry input[type='submit']"
 		);
-		console.log(editSubmitBtton);
-		editSubmitBtton.remove("disabled");
+		editSubmitBtton.disabled = false;
 		validEdit = true;
 	}
 };
 
 const updateBlogEntry = (event) => {
 	event.preventDefault();
-	console.log("update");
+
+	const editForm = event.target;
+
+	// create timestamp for edit
+	const now = new Date();
+
+	// create or extend history property of currently editet entry
+	const addHistory = {
+		timeOfEdit: now,
+		oldHeadline: lastEdit.data.headline,
+		oldParagraphs: lastEdit.data.paragraphs,
+		oldTocAddition: lastEdit.data.tocAddition,
+	};
+
+	if (lastEdit.data.history) {
+		lastEdit.data.history.push(addHistory);
+	} else {
+		lastEdit.data.history = [addHistory];
+	}
+
+	// get edited data
+	const editedInput = {
+		editHeadline: editForm.querySelector(".editHeadline").value,
+		editTocAddition: editForm.querySelector(".editTocAddition").value,
+		editParagraphs: [...editForm.getElementsByClassName("editInput")],
+	};
+
+	// update data
+	lastEdit.data.headline = editedInput.editHeadline;
+	lastEdit.data.tocAddition = editedInput.editTocAddition;
+	lastEdit.data.paragraphs = editedInput.editParagraphs.map((p) => {
+		if (p.value) {
+			return {
+				type: p.classList.contains("editText") ? "text" : "code",
+				content: p.value,
+			};
+		}
+	});
+
+	// replace editing form with edited blog entry
+	const editedEntry = createBlogEntry(lastEdit.data);
+	blogColumn.replaceChild(editedEntry.createdEntry, editForm);
+
+	// replace toc entry with edited toc entry
+
+	// find index of entry
+	const tocPosition = blogEntries.findIndex(
+		(entry) => entry.id === lastEdit.data.id
+	);
+	const tocToReplace = toc.querySelectorAll("li")[tocPosition];
+	toc.replaceChild(editedEntry.createdTocEntry, tocToReplace);
+
+	clearEditingState();
 };
 
+const clearEditingState = () => {
+	// exit editing state
+	editing = false;
+
+	// reset edit validation for submit button
+	validEdit = false;
+};
 const cancelEdit = () => {
 	// get currently active edit form
 	const editForm = document.querySelector(".formEditEntry");
 	// replace form with entry saved in lastEdit
-	blogColumn.replaceChild(lastEdit, editForm);
+	blogColumn.replaceChild(lastEdit.node, editForm);
 
-	// exit editing state
-	editing = false;
+	clearEditingState();
 };
 
 // EDIT BLOG ENTRY END

@@ -63,14 +63,10 @@
 						<h1></h1>
 						<hr />
 						<p class="blogDate monospace">
-							<time datetime=""></time>
+							<time class="blogDateInitial" datetime=""></time>
+							<br />
+							<time class="blogDateEdit" datetime=""></time>
 						</p>
-						<!-- template for blog timestamp (when edited last) -->
-						<template class="blogDateEditTemplate">
-							<p class="blogDate monospace lastEdit">
-								<time datetime="">Test</time>
-							</p>
-						</template>
 						<!-- template for blog entry segment "normal" text -->
 						<template class="blogTextTemplate"><p></p></template>
 						<!-- template for blog entry segment code snippet -->
@@ -96,7 +92,14 @@
 				<template class="editBlogEntryTemplate">
 					<form onsubmit="updateBlogEntry(event)" class="formEditEntry">
 						<div class="blogEntryWrapper">
-							<h1><input type="text" value="" onInput="validateEdit()" /></h1>
+							<h1>
+								<input
+									type="text"
+									class="editHeadline"
+									value=""
+									onInput="validateEdit()"
+								/>
+							</h1>
 							<input
 								type="text"
 								class="editTocAddition"
@@ -121,13 +124,14 @@
 									<div class="formInputWrapper">
 										<p class="editTextareaSizer">
 											<textarea
+												class="editInput editText"
 												onInput="this.parentNode.dataset.value = this.value;validateEdit()"
 											></textarea>
 										</p>
 										<button
 											type="button"
 											class="button removeFormInput"
-											onclick="removeSegment(event)"
+											onclick="removeSegmentEdit(event)"
 										>
 											X
 										</button>
@@ -138,14 +142,14 @@
 								<template class="blogEditTemplateCode">
 									<div class="code formInputWrapper">
 										<pre>
-										<code class="editTextareaSizer">
-											<textarea onInput="this.parentNode.dataset.value = this.value;validateEdit()"></textarea>
-										</code>
-									</pre>
+											<code class="editTextareaSizer">
+												<textarea class="editInput editCode" onInput="this.parentNode.dataset.value = this.value;validateEdit()"></textarea>
+											</code>
+										</pre>
 										<button
 											type="button"
 											class="button removeFormInput"
-											onclick="removeSegment(event)"
+											onclick="removeSegmentEdit(event)"
 										>
 											X
 										</button>
@@ -180,7 +184,7 @@
 								</button>
 								<input
 									type="submit"
-									value="submit entry"
+									value="save changes"
 									class="button"
 									disabled
 								/>
