@@ -26,6 +26,7 @@ VARIABLES
 	--color-accent: #499e49;
 	--color-shy: #bdc7bd;
 	--color-complimentary: #ffb516;
+	--color-signal: rgb(240, 84, 53);
 
 	/* gaps */
 	--gap: 2rem;
@@ -667,36 +668,39 @@ ESJ Blog
 	width: calc(100vw - var(--gap) * 2);
 	border: 2px solid var(--color-accent);
 	right: -100%;
+	max-height: calc(100vh - 10rem);
+	overflow: scroll;
 	transition: right 0.2s ease;
 	z-index: 1;
 }
 
-.blogNav label {
+.blogNavToggleLabel {
 	width: 50px;
 	height: 50px;
 	border-radius: 50% 0 0 50%;
 	background-color: var(--color-accent);
 	color: var(--color-neutral);
 	box-shadow: 0 0.2rem 2rem rgba(0, 0, 0, 0.2);
-	position: absolute;
-	left: -114px;
-	top: 55%;
+	position: fixed;
+	right: -5px;
+	top: 27%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	line-height: 0;
 	cursor: pointer;
+	z-index: 2;
 }
 
-.blogNav label::after {
+.blogNavToggleLabel::after {
 	content: "\00276E";
 }
 
 /* hover blogNav label */
 
-.blogNavToggle:not(:checked) ~ .blogNav label:hover {
+.blogNavToggle:not(:checked) ~ .blogNavToggleLabel:hover {
 	box-shadow: 1rem 0 0 var(--color-accent), 0 0.2rem 2rem rgba(0, 0, 0, 0.2);
-	left: -130px;
+	right: -1px;
 }
 
 /* toggle blogNav */
@@ -705,16 +709,17 @@ ESJ Blog
 	right: var(--gap);
 }
 
-.blogNavToggle:checked ~ .blogNav label {
-	left: -25px;
+.blogNavToggle:checked ~ .blogNavToggleLabel {
+	right: calc(var(--gap) - 25px);
 	border-radius: 50%;
+	background-color: var(--color-dark);
 }
 
-.blogNav label::after {
+.blogNavToggleLabel::after {
 	transition: transform 0.5s ease;
 }
 
-.blogNavToggle:checked ~ .blogNav label::after {
+.blogNavToggle:checked ~ .blogNavToggleLabel::after {
 	transform: rotate(-180deg);
 }
 
@@ -723,12 +728,12 @@ ESJ Blog
 }
 
 @media only screen and (min-width: 768px) {
-	.blogNav label {
-		left: -178px;
+	.blogNavToggleLabel {
+		right: -1px;
 	}
-	.blogNavToggle:not(:checked) ~ .blogNav label:hover {
+	.blogNavToggle:not(:checked) ~ .blogNavToggleLabel:hover {
 		box-shadow: 1rem 0 0 var(--color-accent), 0 0.2rem 2rem rgba(0, 0, 0, 0.2);
-		left: -186px;
+		right: -1px;
 	}
 }
 
@@ -740,7 +745,7 @@ ESJ Blog
 		align-self: start;
 	}
 
-	.blogNav label {
+	.blogNavToggleLabel {
 		display: none;
 	}
 }
@@ -851,6 +856,19 @@ ESJ Blog
 }
 
 /* blog edit from */
+
+.formEditEntry {
+	position: relative;
+}
+
+.formEditEntry .deleteBlogEntryButton {
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
+	padding: 0.5rem;
+	width: 40px;
+	background-color: var(--color-signal);
+}
 
 .formEditEntry input[type="text"],
 .formEditEntry textarea {

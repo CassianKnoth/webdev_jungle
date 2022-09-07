@@ -38,9 +38,9 @@
 				id="blogNavToggle"
 				class="blogNavToggle"
 			/>
+			<label for="blogNavToggle" class="blogNavToggleLabel"></label>
 			<!-- table of contents -->
 			<nav class="blogNav">
-				<label for="blogNavToggle"></label>
 				<h1>Contents:</h1>
 				<hr />
 				<ol start="0" class="tableOfContents">
@@ -190,9 +190,13 @@
 								/>
 							</div>
 						</div>
+						<button type="button" class="button deleteBlogEntryButton">
+							<span>🗑</span>
+						</button>
 					</form>
 				</template>
 			</section>
+
 			<!-- modal with form for creating new blog entry -->
 			<section class="blogForm">
 				<form onsubmit="createEntryFromForm(event)" class="formCreateEntry">

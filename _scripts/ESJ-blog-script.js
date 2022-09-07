@@ -472,6 +472,14 @@ const editBlogEntry = (event, entryId) => {
 		});
 	}
 
+	// eventListener for delete button
+	const deleteButton = editBlogEntryForm.querySelector(
+		".deleteBlogEntryButton"
+	);
+	deleteButton.addEventListener("click", () => {
+		deleteBlogEntry(entryId);
+	});
+
 	// replace entry by editing form
 	blogColumn.replaceChild(editBlogEntryForm, toEditNode);
 };
@@ -557,6 +565,22 @@ const cancelEdit = () => {
 	const editForm = document.querySelector(".formEditEntry");
 	// replace form with entry saved in lastEdit
 	blogColumn.replaceChild(lastEdit.node, editForm);
+
+	clearEditingState();
+};
+
+const deleteBlogEntry = (entryId) => {
+	// remove data entry
+	const atIndex = blogEntries.findIndex((entry) => entry.id === entryId);
+	blogEntries.splice(atIndex, 1);
+
+	// remove form
+	const editForm = document.querySelector(".formEditEntry");
+	blogColumn.removeChild(editForm);
+
+	// remove from toc
+	const tocRemove = toc.querySelectorAll("li")[atIndex];
+	toc.removeChild(tocRemove);
 
 	clearEditingState();
 };
