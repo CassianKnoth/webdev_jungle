@@ -980,6 +980,7 @@ ESJ Blog
 }
 
 .formCreateEntry .formInputs,
+.formInputs .dropZone,
 .editFormInputs,
 .formButtonFlex,
 .formButtonFlexLeft {
@@ -1013,10 +1014,6 @@ ESJ Blog
 	}
 }
 
-.formInputWrapper {
-	position: relative;
-}
-
 .userInput.formTocAddition {
 	border-color: var(--color-neutral);
 	font-size: 0.8rem;
@@ -1042,6 +1039,10 @@ ESJ Blog
 	text-align: right;
 	color: var(--color-dark);
 	margin-bottom: 1rem;
+}
+
+.dropContent {
+	position: relative;
 }
 
 .button.removeFormInput {
@@ -1098,4 +1099,36 @@ ESJ Blog
 .test {
 	height: 100px;
 	background-color: green;
+}
+
+/*
+DRAG'N'DROP
+*/
+
+.dragging {
+	opacity: 0.5;
+}
+
+.dropIndicator {
+	display: none;
+	height: 3rem;
+	margin-bottom: 1rem;
+	background-color: var(--color-shy);
+	border-radius: 0.5rem;
+}
+
+.dropIndicator.showDropIndicator {
+	display: block;
+}
+
+.numbChild {
+	pointer-events: none;
+}
+
+.lastDropPosition {
+	height: 0rem;
+}
+
+.showLastDropPosition {
+	height: 5rem;
 }

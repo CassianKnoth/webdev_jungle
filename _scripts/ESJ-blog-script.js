@@ -270,7 +270,9 @@ const formInputs = document.getElementsByClassName("formInputs")[0];
 
 const addSegment = (event, child, parent) => {
 	// get parent
-	const newInputParent = document.querySelector(`.${parent}`);
+	const newInputParent = document
+		.querySelector(`.${parent}`)
+		.querySelector(".dropZone");
 
 	// get template as child
 	const inputTemplate = document.querySelector(`template.${child}`);
@@ -280,12 +282,14 @@ const addSegment = (event, child, parent) => {
 		.cloneNode(true)
 		.querySelector(".formInputWrapper");
 
-	// append to input list
-	newInputParent.appendChild(newInput);
+	// insert newInput at the end
+	// respect lastDropPosition element for functional drag'n'drop
+	const lastDropPositionWrapper = newInputParent.lastElementChild;
+	newInputParent.insertBefore(newInput, lastDropPositionWrapper);
 };
 
 const removeSegment = (event) => {
-	event.target.parentNode.remove();
+	event.target.closest(".formInputWrapper").remove();
 };
 
 const removeSegmentEdit = (event) => {
@@ -586,4 +590,106 @@ const deleteBlogEntry = (entryId) => {
 };
 
 // EDIT BLOG ENTRY END
+// >>>
+
+// <<<
+// DRAG'N'DROP START
+
+let dragndropContainer;
+let dragging;
+
+const handleDragStart = (event) => {
+	console.log("drag start");
+
+	// set dragged element
+	dragging = event.target;
+	dragging.classList.add("dragging");
+
+	// find the according dropZone (modal or edit)
+	dragndropContainer = dragging.closest(".dropZone");
+
+	// enable lastDropPosition
+	dragndropContainer
+		.querySelector(".lastDropPosition")
+		.classList.add("showLastDropPosition");
+};
+
+let draggingOver;
+
+const handleDragEnter = (event) => {
+	console.log("drag enter");
+
+	// if a child element fires drag enter, always find the parent "dragWrapper"
+	if (event.target.classList.contains("dragWrapper")) {
+		draggingOver = event.target;
+	} else {
+		draggingOver = event.target.closest(".dragWrapper");
+	}
+
+	// do nothing if dragging over "original" element
+	if (draggingOver.classList.contains("dragging")) {
+		console.log("enter the dragging element");
+		return;
+	}
+
+	// toggle class of the indicator
+	draggingOver
+		.querySelector(".dropIndicator")
+		.classList.add("showDropIndicator");
+
+	// prevent child elements from triggering events
+	const dragChildren = Array.from(draggingOver.children);
+	dragChildren.forEach((child) => child.classList.add("numbChild"));
+};
+
+const handleDragLeave = (event) => {
+	console.log("drag leave");
+
+	const dragLeave = event.target;
+
+	// if a child element fires drag leave, do nothing
+	// if "dragWrapper" fires drag leave, reset the left element
+	if (dragLeave.classList.contains("dragWrapper")) {
+		// reset drag enter state
+		resetDragEnterState(dragLeave);
+	}
+};
+
+const allowDrop = (event) => {
+	event.preventDefault();
+};
+
+const handleDrop = (event) => {
+	event.preventDefault();
+	event.stopPropagation();
+	console.log("drop");
+	dragndropContainer.insertBefore(dragging, draggingOver);
+};
+
+const handleDragEnd = () => {
+	console.log("drag end");
+
+	dragging.classList.remove("dragging");
+
+	// reset drag enter state
+	resetDragEnterState(draggingOver);
+
+	// hide lastDropPosition
+	dragndropContainer
+		.querySelector(".lastDropPosition")
+		.classList.remove("showLastDropPosition");
+};
+
+const resetDragEnterState = (parent) => {
+	console.log("reset: ", parent);
+
+	// hide indicator
+	parent.querySelector(".dropIndicator").classList.remove("showDropIndicator");
+
+	// enable child elements again
+	const numbChildren = Array.from(parent.children);
+	numbChildren.forEach((numbChild) => numbChild.classList.remove("numbChild"));
+};
+
+// DRAG'N'DROP END
 // >>>

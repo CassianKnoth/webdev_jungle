@@ -214,72 +214,129 @@
 							class="userInput formTocAddition"
 							placeholder="Optional subheadline in table of contents"
 						/>
-						<div class="formInputWrapper">
-							<textarea
-								class="userInput newInput formParagraph"
-								placeholder="Write something... *"
-								required
-								oninvalid="formValidation(event)"
-							></textarea>
-							<button
-								type="button"
-								class="button removeFormInput"
-								onclick="removeSegment(event)"
+						<div
+							class="dropZone"
+							ondrop="handleDrop(event)"
+							ondragover="allowDrop(event)"
+						>
+							<div
+								class="formInputWrapper dragWrapper"
+								draggable="true"
+								ondragstart="handleDragStart(event)"
+								ondragend="handleDragEnd()"
+								ondragenter="handleDragEnter(event)"
+								ondragleave="handleDragLeave(event)"
 							>
-								X
-							</button>
-						</div>
-						<!-- template for paragraph input -->
-						<template class="formInputWrapperTemplateText">
-							<div class="formInputWrapper">
-								<textarea
-									class="userInput newInput formParagraph"
-									placeholder="Write something... *"
-									required
-									oninvalid="formValidation(event)"
-								></textarea>
-								<button
-									type="button"
-									class="button removeFormInput"
-									onclick="removeSegment(event)"
-								>
-									X
-								</button>
+								<div class="dropIndicator"></div>
+								<div class="dropContent">
+									<textarea
+										class="userInput newInput formParagraph"
+										placeholder="Write something... *"
+										required
+										oninvalid="formValidation(event)"
+									></textarea>
+									<button
+										type="button"
+										class="button removeFormInput"
+										onclick="removeSegment(event)"
+									>
+										X
+									</button>
+								</div>
 							</div>
-						</template>
-						<div class="formInputWrapper">
-							<textarea
-								class="userInput newInput formCode monospace"
-								placeholder="Add code... *"
-								required
-								oninvalid="formValidation(event)"
-							></textarea>
-							<button
-								type="button"
-								class="button removeFormInput"
-								onclick="removeSegment(event)"
+							<!-- template for paragraph input -->
+							<template class="formInputWrapperTemplateText">
+								<div
+									class="formInputWrapper dragWrapper"
+									draggable="true"
+									ondragstart="handleDragStart(event)"
+									ondragend="handleDragEnd()"
+									ondragenter="handleDragEnter(event)"
+									ondragleave="handleDragLeave(event)"
+								>
+									<div class="dropIndicator"></div>
+									<div class="dropContent">
+										<textarea
+											class="userInput newInput formParagraph"
+											placeholder="Write something... *"
+											required
+											oninvalid="formValidation(event)"
+										></textarea>
+										<button
+											type="button"
+											class="button removeFormInput"
+											onclick="removeSegment(event)"
+										>
+											X
+										</button>
+									</div>
+								</div>
+							</template>
+							<div
+								class="formInputWrapper dragWrapper"
+								draggable="true"
+								ondragstart="handleDragStart(event)"
+								ondragend="handleDragEnd()"
+								ondragenter="handleDragEnter(event)"
+								ondragleave="handleDragLeave(event)"
 							>
-								X
-							</button>
-						</div>
-						<!-- template for code input -->
-						<template class="formInputWrapperTemplateCode">
-							<div class="formInputWrapper">
-								<textarea
-									class="userInput newInput formCode monospace"
-									placeholder="Add code... *"
-									required
-									oninvalid="formValidation(event)"
-								></textarea>
-								<button
-									type="button"
-									class="button removeFormInput"
-									onclick="removeSegment(event)"
-								>
-									X
-								</button>
+								<div class="dropIndicator"></div>
+								<div class="dropContent">
+									<textarea
+										class="userInput newInput formCode monospace"
+										placeholder="Add code... *"
+										required
+										oninvalid="formValidation(event)"
+									></textarea>
+									<button
+										type="button"
+										class="button removeFormInput"
+										onclick="removeSegment(event)"
+									>
+										X
+									</button>
+								</div>
 							</div>
-						</template>
+							<!-- template for code input -->
+							<template class="formInputWrapperTemplateCode">
+								<div
+									class="formInputWrapper dragWrapper"
+									draggable="true"
+									ondragstart="handleDragStart(event)"
+									ondragend="handleDragEnd()"
+									ondragenter="handleDragEnter(event)"
+									ondragleave="handleDragLeave(event)"
+								>
+									<div class="dropIndicator"></div>
+									<div class="dropContent">
+										<textarea
+											class="userInput newInput formCode monospace"
+											placeholder="Add code... *"
+											required
+											oninvalid="formValidation(event)"
+										></textarea>
+										<button
+											type="button"
+											class="button removeFormInput"
+											onclick="removeSegment(event)"
+										>
+											X
+										</button>
+									</div>
+								</div>
+							</template>
+							<div
+								class="formInputWrapper dragWrapper"
+								draggable="true"
+								ondragstart="handleDragStart(event)"
+								ondragend="handleDragEnd()"
+								ondragenter="handleDragEnter(event)"
+								ondragleave="handleDragLeave(event)"
+							>
+								<div class="dropIndicator"></div>
+								<div class="lastDropPosition"></div>
+							</div>
+						</div>
 					</div>
 					<p class="formFootnote">* mandatory</p>
 					<div class="formButtonFlex">
