@@ -120,41 +120,78 @@
 
 							<!-- template for blog entry segment "normal" text -->
 							<div class="editFormInputs">
-								<template class="blogEditTemplateText">
-									<div class="formInputWrapper">
-										<p class="editTextareaSizer">
-											<textarea
-												class="editInput editText"
-												onInput="this.parentNode.dataset.value = this.value;validateEdit()"
-											></textarea>
-										</p>
-										<button
-											type="button"
-											class="button removeFormInput"
-											onclick="removeSegmentEdit(event)"
+								<div
+									class="dropZone"
+									ondrop="handleDrop(event)"
+									ondragover="allowDrop(event)"
+								>
+									<template class="blogEditTemplateText">
+										<div
+											class="formInputWrapper dragWrapper"
+											draggable="true"
+											ondragstart="handleDragStart(event)"
+											ondragend="handleDragEnd()"
+											ondragenter="handleDragEnter(event)"
+											ondragleave="handleDragLeave(event)"
 										>
-											X
-										</button>
-									</div>
-								</template>
+											<div class="dropIndicator"></div>
+											<div class="dropContent">
+												<p class="editTextareaSizer">
+													<textarea
+														class="editInput editText"
+														onInput="this.parentNode.dataset.value = this.value;validateEdit()"
+													></textarea>
+												</p>
+												<button
+													type="button"
+													class="button removeFormInput"
+													onclick="removeSegmentEdit(event)"
+												>
+													X
+												</button>
+											</div>
+										</div>
+									</template>
 
-								<!-- template for blog entry segment code snippet -->
-								<template class="blogEditTemplateCode">
-									<div class="code formInputWrapper">
-										<pre>
+									<!-- template for blog entry segment code snippet -->
+									<template class="code blogEditTemplateCode">
+										<div
+											class="formInputWrapper dragWrapper"
+											draggable="true"
+											ondragstart="handleDragStart(event)"
+											ondragend="handleDragEnd()"
+											ondragenter="handleDragEnter(event)"
+											ondragleave="handleDragLeave(event)"
+										>
+											<div class="dropIndicator"></div>
+											<div class="dropContent">
+												<pre>
 											<code class="editTextareaSizer">
 												<textarea class="editInput editCode" onInput="this.parentNode.dataset.value = this.value;validateEdit()"></textarea>
 											</code>
 										</pre>
-										<button
-											type="button"
-											class="button removeFormInput"
-											onclick="removeSegmentEdit(event)"
-										>
-											X
-										</button>
+												<button
+													type="button"
+													class="button removeFormInput"
+													onclick="removeSegmentEdit(event)"
+												>
+													X
+												</button>
+											</div>
+										</div>
+									</template>
+									<div
+										class="formInputWrapper dragWrapper"
+										draggable="true"
+										ondragstart="handleDragStart(event)"
+										ondragend="handleDragEnd()"
+										ondragenter="handleDragEnter(event)"
+										ondragleave="handleDragLeave(event)"
+									>
+										<div class="dropIndicator"></div>
+										<div class="lastDropPosition"></div>
 									</div>
-								</template>
+								</div>
 							</div>
 						</div>
 						<div class="formButtonFlex">

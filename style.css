@@ -885,6 +885,7 @@ ESJ Blog
 
 .formEditEntry code textarea {
 	white-space: nowrap;
+	color: var(--color-neutral);
 	background-color: inherit;
 	outline: none;
 	border: 2px dotted var(--color-shy);
@@ -912,6 +913,7 @@ ESJ Blog
 
 .formEditEntry textarea {
 	grid-area: 2 / 1;
+	padding: 0 1rem;
 }
 
 .formEditEntry .blogEntryWrapper {
@@ -980,7 +982,7 @@ ESJ Blog
 }
 
 .formCreateEntry .formInputs,
-.formInputs .dropZone,
+.dropZone,
 .editFormInputs,
 .formButtonFlex,
 .formButtonFlexLeft {

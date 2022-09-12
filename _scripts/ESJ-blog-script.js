@@ -18,7 +18,7 @@ let blogEntries = [
 			{
 				type: "text",
 				content:
-					"Lorem ipsum dolor sit amet consectetur adipisicing elit. Et provident modi maiores, quisquam veritatis eum itaque voluptas accusantium vitae nulla?",
+					"Lorem ipsum dolor sit amet consectetur adipisicing elit. Et provident modi maiores, quisquam veritatis eum itaque voluptas accusantium vitae nulla? Lorem ipsum dolor sit amet consectetur adipisicing elit. Et provident modi maiores, quisquam veritatis eum itaque voluptas accusantium vitae nulla?",
 			},
 			{
 				type: "code",
@@ -391,7 +391,7 @@ const editBlogEntryTemplate = document.querySelector(".editBlogEntryTemplate");
 // for storing the unedited blog entry, if edit gets cancelled
 let lastEdit;
 
-// make sure only one entry can be edited at a time by keeping track of a "editing state"
+// make sure only one entry can be edited at a time by keeping track of an "editing state"
 let editing = false;
 
 const editBlogEntry = (event, entryId) => {
@@ -471,8 +471,11 @@ const editBlogEntry = (event, entryId) => {
 			}
 
 			editBlogEntryForm
-				.querySelector(".editFormInputs")
-				.appendChild(newSegment);
+				.querySelector(".dropZone")
+				.insertBefore(
+					newSegment,
+					editBlogEntryForm.querySelector(".dropZone").lastElementChild
+				);
 		});
 	}
 
@@ -664,6 +667,11 @@ const handleDrop = (event) => {
 	event.stopPropagation();
 	console.log("drop");
 	dragndropContainer.insertBefore(dragging, draggingOver);
+
+	// valid edit if drag'n'drop happens in editing form
+	if (dragndropContainer.parentNode.classList.contains("editFormInputs")) {
+		validateEdit();
+	}
 };
 
 const handleDragEnd = () => {
