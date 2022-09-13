@@ -6,10 +6,43 @@ window.onclick = (event) => {
 };
 
 // <<<
+// LOCAL STORAGE START
+
+let idCounter;
+
+if (localStorage.getItem("idCounterStorage") === null) {
+	idCounter = 0;
+} else {
+	idCounter = parseInt(JSON.parse(localStorage.getItem("idCounterStorage")));
+}
+
+const saveToLocal = (blogEntryData) => {
+	let blogEntries;
+
+	if (localStorage.getItem("blogEntries") === null) {
+		// set an initial set of blog entries
+		blogEntries = [];
+	} else {
+		// else get data from storage
+		blogEntries = JSON.parse(localStorage.getItem("blogEntries"));
+	}
+
+	blogEntries.push(blogEntryData);
+	localStorage.setItem("blogEntries", JSON.stringify(blogEntries));
+
+	// count id counter 1 up
+	idCounter++;
+	localStorage.setItem("idCounterstorage", JSON.stringify(idCounter));
+};
+
+// LOCAL STORAGE END
+// >>>
+
+// <<<
 // BLOG DATA START
 
 // blog entries
-let blogEntries = [
+let initialBlogEntries = [
 	{
 		id: 0,
 		headline: "Introduction",
@@ -90,7 +123,10 @@ console.log(greeting);`,
 // <<<
 // GENERATE BLOG START
 
-var idCounter = 0;
+// get data from localStorage
+const savedOnLocal = () => {
+	return JSON.parse(localStorage.getItem("blogEntries"));
+};
 
 // get element where entry should be placed
 const blogColumn = document.querySelector(".blogEntries");
@@ -108,16 +144,17 @@ const toc = document.querySelector(".tableOfContents");
 const tocTemplate = document.querySelector(".tocTemplate");
 
 const getTimeStamp = (date) => {
+	let datefromJSON = new Date(date);
 	return {
-		visible: `${date.toLocaleDateString([], {
+		visible: `${datefromJSON.toLocaleDateString([], {
 			year: "numeric",
 			month: "long",
 			day: "2-digit",
-		})} | ${date.toLocaleTimeString([], {
+		})} | ${datefromJSON.toLocaleTimeString([], {
 			hour: "numeric",
 			minute: "numeric",
 		})}`,
-		attribute: date.toISOString(),
+		attribute: datefromJSON.toISOString(),
 	};
 };
 
@@ -217,7 +254,6 @@ const createBlogEntry = (entry) => {
 	};
 };
 
-// hardcoded blogentries (later from database)
 const generateBlog = (entries) => {
 	for (entry of entries) {
 		const createdEntry = createBlogEntry(entry);
@@ -226,12 +262,29 @@ const generateBlog = (entries) => {
 
 		// append new toc entry to toc
 		toc.appendChild(createdEntry.createdTocEntry);
-
-		idCounter++;
 	}
 };
 
-generateBlog(blogEntries);
+// hardcoded blogentries (later from database)
+const generateNewBlog = (entries) => {
+	for (entry of entries) {
+		const createdEntry = createBlogEntry(entry);
+		// insert entry into parent before form
+		blogColumn.appendChild(createdEntry.createdEntry);
+
+		// append new toc entry to toc
+		toc.appendChild(createdEntry.createdTocEntry);
+
+		// save to localStorage
+		saveToLocal(entry);
+	}
+};
+
+if (savedOnLocal() !== null) {
+	generateBlog(savedOnLocal());
+} else {
+	generateNewBlog(initialBlogEntries);
+}
 
 // GENERATE BLOG END
 // >>>
@@ -268,14 +321,14 @@ modal.addEventListener("click", (event) => {
 //inputs
 const formInputs = document.getElementsByClassName("formInputs")[0];
 
-const addSegment = (event, child, parent) => {
+const addSegment = (event, childClass, parentClass) => {
 	// get parent
 	const newInputParent = document
-		.querySelector(`.${parent}`)
+		.querySelector(`.${parentClass}`)
 		.querySelector(".dropZone");
 
 	// get template as child
-	const inputTemplate = document.querySelector(`template.${child}`);
+	const inputTemplate = document.querySelector(`template.${childClass}`);
 
 	// clone from text or code input template
 	const newInput = inputTemplate.content
@@ -328,8 +381,6 @@ const createEntryFromForm = (event) => {
 		tocAddition: userInput.newTocAddition,
 	};
 
-	blogEntries.push(newEntry);
-
 	const createdEntry = createBlogEntry(newEntry);
 
 	// insert entry into parent before form
@@ -338,7 +389,8 @@ const createEntryFromForm = (event) => {
 	// append new toc entry to toc
 	toc.appendChild(createdEntry.createdTocEntry);
 
-	idCounter++;
+	// save to localStorage (including handling of idCounter)
+	saveToLocal(newEntry);
 
 	// close modal
 	closeModal();
@@ -404,7 +456,9 @@ const editBlogEntry = (event, entryId) => {
 	editing = true;
 
 	// find the data object of the entry
-	const toEditData = blogEntries.find((blogEntry) => blogEntry.id == entryId);
+	const toEditData = savedOnLocal().find(
+		(blogEntry) => blogEntry.id == entryId
+	);
 	// find the dom node of the entry
 	const toEditNode = event.target.closest(".blogEntry");
 
@@ -485,6 +539,7 @@ const editBlogEntry = (event, entryId) => {
 	);
 	deleteButton.addEventListener("click", () => {
 		deleteBlogEntry(entryId);
+		console.log("added delete eventListener");
 	});
 
 	// replace entry by editing form
@@ -549,13 +604,20 @@ const updateBlogEntry = (event) => {
 	blogColumn.replaceChild(editedEntry.createdEntry, editForm);
 
 	// replace toc entry with edited toc entry
-
 	// find index of entry
-	const tocPosition = blogEntries.findIndex(
+	const tocPosition = savedOnLocal().findIndex(
 		(entry) => entry.id === lastEdit.data.id
 	);
 	const tocToReplace = toc.querySelectorAll("li")[tocPosition];
 	toc.replaceChild(editedEntry.createdTocEntry, tocToReplace);
+
+	// save data to localStorage
+	const updateSaveToLocal = savedOnLocal();
+	const updateAtIndex = updateSaveToLocal.findIndex(
+		(entry) => entry.id === lastEdit.data.id
+	);
+	updateSaveToLocal[updateAtIndex] = lastEdit.data;
+	localStorage.setItem("blogEntries", JSON.stringify(updateSaveToLocal));
 
 	clearEditingState();
 };
@@ -577,17 +639,18 @@ const cancelEdit = () => {
 };
 
 const deleteBlogEntry = (entryId) => {
-	// remove data entry
-	const atIndex = blogEntries.findIndex((entry) => entry.id === entryId);
-	blogEntries.splice(atIndex, 1);
-
+	// delete nodes
+	const atIndex = savedOnLocal().findIndex((entry) => entry.id === entryId);
 	// remove form
 	const editForm = document.querySelector(".formEditEntry");
 	blogColumn.removeChild(editForm);
-
 	// remove from toc
 	const tocRemove = toc.querySelectorAll("li")[atIndex];
 	toc.removeChild(tocRemove);
+
+	// update server data and page data
+	const newSaveToLocal = savedOnLocal().filter((entry) => entry.id !== entryId);
+	localStorage.setItem("blogEntries", JSON.stringify(newSaveToLocal));
 
 	clearEditingState();
 };
